@@ -9,11 +9,11 @@
     "versions": [
       {
         "version": "1.0.0.11",
-        "changelog": "Fix IPTV players categorizing VOD as live TV: use EXTINF:0 duration instead of -1, and inline description attribute.",
+        "changelog": "Compilacion automatica desde CI.",
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.11.zip",
-        "checksum": "cfcf2e972468a536ea5ec54500e2408b",
-        "timestamp": "2026-07-01T13:30:00Z"
+        "checksum": "168118fde444365e3e64a48f083561a8",
+        "timestamp": "2026-07-01T12:37:04Z"
       },
       {
         "version": "1.0.0.10",
