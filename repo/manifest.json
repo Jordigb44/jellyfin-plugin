@@ -9,11 +9,11 @@
     "versions": [
       {
         "version": "1.0.0.7",
-        "changelog": "Fix MissingMethodException GetItemList (compatibilidad con Jellyfin 10.11).",
+        "changelog": "Compilacion automatica desde CI.",
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.7.zip",
-        "checksum": "d9429149f29cdc8fa75766299e48ac822c83c109d26b97898a77ba0f3490e43e",
-        "timestamp": "2026-07-01T11:35:00Z"
+        "checksum": "7585b638a00310fb52ce9b14f22615b9",
+        "timestamp": "2026-07-01T11:35:40Z"
       },
       {
         "version": "1.0.0.6",
