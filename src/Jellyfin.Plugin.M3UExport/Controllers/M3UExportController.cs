@@ -165,7 +165,6 @@ public partial class M3UExportController : ControllerBase
             IncludeItemTypes = [BaseItemKind.Movie],
             Recursive = true,
             IsVirtualItem = false,
-            OrderBy = [(ItemSortBy.SortName, SortOrder.Ascending)]
         });
         return BuildM3U(items, "Movies", "movie");
     }
@@ -179,7 +178,6 @@ public partial class M3UExportController : ControllerBase
                 IncludeItemTypes = [BaseItemKind.Series],
                 Recursive = true,
                 IsVirtualItem = false,
-                OrderBy = [(ItemSortBy.SortName, SortOrder.Ascending)]
             });
             return BuildM3U(items, "Series", "series");
         }
@@ -189,7 +187,6 @@ public partial class M3UExportController : ControllerBase
             IncludeItemTypes = [BaseItemKind.Episode],
             Recursive = true,
             IsVirtualItem = false,
-            OrderBy = [(ItemSortBy.SeriesSortName, SortOrder.Ascending), (ItemSortBy.ParentIndexNumber, SortOrder.Ascending), (ItemSortBy.IndexNumber, SortOrder.Ascending)]
         });
 
         if (Config.MaxEpisodesPerSeries > 0)
@@ -241,7 +238,6 @@ public partial class M3UExportController : ControllerBase
         {
             IncludeItemTypes = [BaseItemKind.BoxSet],
             Recursive = true,
-            OrderBy = [(ItemSortBy.SortName, SortOrder.Ascending)]
         });
         return BuildM3U(items, "Collections", "collection");
     }
