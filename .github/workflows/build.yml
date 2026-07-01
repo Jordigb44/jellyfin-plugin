@@ -1,0 +1,77 @@
+name: Build & Deploy Plugin
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'repo/**'
+      - '.github/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build
+        run: dotnet build src/Jellyfin.Plugin.M3UExport -c Release
+
+      - name: Get version from build.yaml
+        id: version
+        run: |
+          VER=$(grep '^version:' build.yaml | sed 's/version: *"//;s/"//')
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+
+      - name: Create plugin zip
+        run: |
+          VER=${{ steps.version.outputs.version }}
+          mkdir -p repo
+          cd src/Jellyfin.Plugin.M3UExport/bin/Release/net8.0
+          zip -j ../../../../../repo/Jellyfin.Plugin.M3UExport_${VER}.zip \
+            Jellyfin.Plugin.M3UExport.dll
+
+      - name: Update manifest
+        run: |
+          VER=${{ steps.version.outputs.version }}
+          CHKSUM=$(sha256sum repo/Jellyfin.Plugin.M3UExport_${VER}.zip | cut -d' ' -f1)
+          TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+          cat > repo/manifest.json << EOF
+          [
+            {
+              "guid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+              "name": "M3U Export",
+              "description": "Exporta películas, series, TV en vivo y colecciones a listas M3U compatibles con cualquier reproductor IPTV. Soporta filtrado por usuario, API Key embebida, streaming directo/transcodificado/ruta local, y exportación programada a archivo.",
+              "overview": "Exporta tu biblioteca Jellyfin a listas M3U con control de usuarios.",
+              "owner": "${{ github.repository_owner }}",
+              "category": "General",
+              "versions": [
+                {
+                  "version": "${VER}",
+                  "changelog": "Compilación automática desde CI.",
+                  "targetAbi": "10.10.0.0",
+                  "sourceUrl": "https://raw.githubusercontent.com/${{ github.repository }}/main/repo/Jellyfin.Plugin.M3UExport_${VER}.zip",
+                  "checksum": "${CHKSUM}",
+                  "timestamp": "${TS}"
+                }
+              ]
+            }
+          ]
+          EOF
+
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add repo/manifest.json repo/*.zip
+          git diff --staged --quiet || git commit -m "Auto-build: v${{ steps.version.outputs.version }}"
+          git push

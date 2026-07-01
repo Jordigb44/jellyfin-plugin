@@ -1,0 +1,20 @@
+[
+  {
+    "guid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "M3U Export",
+    "description": "Exporta películas, series, TV en vivo y colecciones a listas M3U compatibles con cualquier reproductor IPTV. Soporta filtrado por usuario, API Key embebida, streaming directo/transcodificado/ruta local, y exportación programada a archivo.",
+    "overview": "Exporta tu biblioteca Jellyfin a listas M3U con control de usuarios.",
+    "owner": "tu-usuario-github",
+    "category": "General",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "Release inicial: Exporta películas, series, TV en vivo y colecciones a M3U.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/TU-USUARIO/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.0.zip",
+        "checksum": "5ccfe642426cd08460e218da66019b139ea3de18f79017b6083f0c73a3d9d755",
+        "timestamp": "2026-07-01T00:00:00Z"
+      }
+    ]
+  }
+]

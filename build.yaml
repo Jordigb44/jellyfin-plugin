@@ -1,0 +1,16 @@
+name: "M3U Export"
+guid: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+version: "1.0.0.0"
+targetAbi: "10.10.0.0"
+framework: "net8.0"
+overview: "Exporta tu biblioteca Jellyfin a listas M3U"
+description: >
+  Plugin para exportar películas, series, TV en vivo y colecciones de Jellyfin
+  a formato M3U/M3U8. Soporta filtrado por usuario, exportación por API REST,
+  URLs de streaming directo con API Key embebida, y exportación programada.
+category: "General"
+owner: "homelab"
+artifacts:
+  - "Jellyfin.Plugin.M3UExport.dll"
+changelog: |-
+  Initial release: Export movies, series, live TV, collections to M3U.
