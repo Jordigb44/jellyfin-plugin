@@ -8,12 +8,12 @@
     "category": "General",
     "versions": [
       {
-        "version": "1.0.0.0",
-        "changelog": "Compilación automática desde CI.",
+        "version": "1.0.0.1",
+        "changelog": "Corrige página de configuración en blanco: usa fetch como fallback y elimina dependencia de DOMContentLoaded.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.0.zip",
-        "checksum": "3342f5b5ff3a4febde16735b3a20cc6c",
-        "timestamp": "2026-07-01T09:31:58Z"
+        "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.1.zip",
+        "checksum": "3eb794801e135416b7380bb5baf8f801",
+        "timestamp": "2026-07-01T10:00:00Z"
       }
     ]
   }

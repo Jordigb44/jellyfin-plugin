@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>1.0.0.1</Version>
     <NoWarn>$(NoWarn);CS1591;SA1633;SA1600</NoWarn>
   </PropertyGroup>
 
@@ -21,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Configuration\config.html" />
+    <EmbeddedResource Include="Configuration/config.html" />
   </ItemGroup>
 
 </Project>
