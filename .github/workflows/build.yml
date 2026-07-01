@@ -40,60 +40,38 @@ jobs:
             Jellyfin.Plugin.M3UExport.dll
 
       - name: Update manifest
-        shell: bash
-        env:
-          VER: ${{ steps.version.outputs.version }}
-          REPO: ${{ github.repository }}
         run: |
-          export CHKSUM=$(md5sum repo/Jellyfin.Plugin.M3UExport_${VER}.zip | cut -d' ' -f1)
-          export TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          VER=${{ steps.version.outputs.version }}
+          REPO=${{ github.repository }}
+          CHKSUM=$(md5sum repo/Jellyfin.Plugin.M3UExport_${VER}.zip | cut -d' ' -f1)
+          TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          URL="https://raw.githubusercontent.com/${REPO}/main/repo/Jellyfin.Plugin.M3UExport_${VER}.zip"
 
-          python3 -c "
-import json, os
-ver = os.environ['VER']
-chk = os.environ['CHKSUM']
-ts = os.environ['TS']
-repo = os.environ['REPO']
-url = f'https://raw.githubusercontent.com/{repo}/main/repo/Jellyfin.Plugin.M3UExport_{ver}.zip'
+          if [ ! -f repo/manifest.json ]; then
+            printf '[\n  {\n    "guid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",\n    "name": "M3U Export",\n    "description": "Exporta peliculas, series, TV en vivo y colecciones a listas M3U.",\n    "overview": "Exporta tu biblioteca Jellyfin a listas M3U con control de usuarios.",\n    "owner": "'${{ github.repository_owner }}'",\n    "category": "General",\n    "versions": []\n  }\n]\n' > repo/manifest.json
+          fi
 
-entry = {
-    'version': ver,
-    'changelog': 'Compilación automática desde CI.',
-    'targetAbi': '10.10.0.0',
-    'sourceUrl': url,
-    'checksum': chk,
-    'timestamp': ts
-}
-
-try:
-    with open('repo/manifest.json') as f:
-        manifest = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
-    manifest = [{
-        'guid': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-        'name': 'M3U Export',
-        'description': 'Exporta películas, series, TV en vivo y colecciones a listas M3U compatibles con cualquier reproductor IPTV. Soporta filtrado por usuario, API Key embebida, streaming directo/transcodificado/ruta local, y exportación programada a archivo.',
-        'overview': 'Exporta tu biblioteca Jellyfin a listas M3U con control de usuarios.',
-        'owner': '${{ github.repository_owner }}',
-        'category': 'General',
-        'versions': []
-    }]
-
-# Avoid duplicate entries
-existing = [v['version'] for v in manifest[0]['versions']]
-if ver not in existing:
-    manifest[0]['versions'].insert(0, entry)
-else:
-    # Update existing entry
-    for v in manifest[0]['versions']:
-        if v['version'] == ver:
-            v.update(entry)
-            break
-
-with open('repo/manifest.json', 'w') as f:
-    json.dump(manifest, f, indent=2)
-    f.write('\n')
-"
+          jq --arg ver "$VER" --arg chk "$CHKSUM" --arg ts "$TS" --arg url "$URL" \
+            'if any(.[0].versions[]; .version == $ver) then
+               (.[0].versions[] | select(.version == $ver)) |= {
+                 "version": $ver,
+                 "changelog": "Compilacion automatica desde CI.",
+                 "targetAbi": "10.10.0.0",
+                 "sourceUrl": $url,
+                 "checksum": $chk,
+                 "timestamp": $ts
+               }
+             else
+               .[0].versions = [{
+                 "version": $ver,
+                 "changelog": "Compilacion automatica desde CI.",
+                 "targetAbi": "10.10.0.0",
+                 "sourceUrl": $url,
+                 "checksum": $chk,
+                 "timestamp": $ts
+               }] + .[0].versions
+             end' repo/manifest.json > repo/manifest.json.tmp \
+          && mv repo/manifest.json.tmp repo/manifest.json
 
       - name: Commit & Push
         run: |
