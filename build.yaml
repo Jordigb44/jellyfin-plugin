@@ -13,4 +13,4 @@ owner: "homelab"
 artifacts:
   - "Jellyfin.Plugin.M3UExport.dll"
 changelog: |-
-  v1.0.0.7: Fixed GetItemList API breakage on Jellyfin 10.11
+  v1.0.0.8: Add tvg-type attribute for IPTV player categorization
