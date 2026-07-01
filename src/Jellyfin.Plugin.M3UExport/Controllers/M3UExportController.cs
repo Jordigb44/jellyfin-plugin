@@ -23,18 +23,15 @@ namespace Jellyfin.Plugin.M3UExport.Controllers;
 public partial class M3UExportController : ControllerBase
 {
     private readonly ILibraryManager _libraryManager;
-    private readonly IUserManager _userManager;
     private readonly ILiveTvManager _liveTvManager;
     private readonly ILogger<M3UExportController> _logger;
 
     public M3UExportController(
         ILibraryManager libraryManager,
-        IUserManager userManager,
         ILiveTvManager liveTvManager,
         ILogger<M3UExportController> logger)
     {
         _libraryManager = libraryManager;
-        _userManager = userManager;
         _liveTvManager = liveTvManager;
         _logger = logger;
     }
@@ -45,59 +42,54 @@ public partial class M3UExportController : ControllerBase
     [HttpGet("movies.m3u")]
     public IActionResult GetMoviesM3U([FromQuery] Guid? userId, [FromQuery] string? token)
     {
-        var (err, uid) = ResolveUser(userId, token);
-        if (err is not null) return err;
-        return M3UFileResult(ExportMovies(uid));
+        if (!ValidateToken(token)) return Unauthorized(new { error = "API Key inv\u00e1lida" });
+        return M3UFileResult(ExportMovies(userId));
     }
 
     [AllowAnonymous]
     [HttpGet("series.m3u")]
     public IActionResult GetSeriesM3U([FromQuery] Guid? userId, [FromQuery] string? token)
     {
-        var (err, uid) = ResolveUser(userId, token);
-        if (err is not null) return err;
-        return M3UFileResult(ExportSeries(uid));
+        if (!ValidateToken(token)) return Unauthorized(new { error = "API Key inv\u00e1lida" });
+        return M3UFileResult(ExportSeries(userId));
     }
 
     [AllowAnonymous]
     [HttpGet("livetv.m3u")]
     public IActionResult GetLiveTVM3U([FromQuery] Guid? userId, [FromQuery] string? token)
     {
-        var (err, uid) = ResolveUser(userId, token);
-        if (err is not null) return err;
-        return M3UFileResult(ExportLiveTV(uid));
+        if (!ValidateToken(token)) return Unauthorized(new { error = "API Key inv\u00e1lida" });
+        return M3UFileResult(ExportLiveTV(userId));
     }
 
     [AllowAnonymous]
     [HttpGet("collections.m3u")]
     public IActionResult GetCollectionsM3U([FromQuery] Guid? userId, [FromQuery] string? token)
     {
-        var (err, uid) = ResolveUser(userId, token);
-        if (err is not null) return err;
-        return M3UFileResult(ExportCollections(uid));
+        if (!ValidateToken(token)) return Unauthorized(new { error = "API Key inv\u00e1lida" });
+        return M3UFileResult(ExportCollections(userId));
     }
 
     [AllowAnonymous]
     [HttpGet("all.m3u")]
     public async Task<IActionResult> GetAllM3U([FromQuery] Guid? userId, [FromQuery] string? token, CancellationToken ct)
     {
-        var (err, uid) = ResolveUser(userId, token);
-        if (err is not null) return err;
+        if (!ValidateToken(token)) return Unauthorized(new { error = "API Key inv\u00e1lida" });
 
         var sb = new StringBuilder();
         sb.AppendLine("#EXTM3U");
 
         if (Config.IncludeMovies)
-            sb.Append(StripHeader(ExportMovies(uid)));
+            sb.Append(StripHeader(ExportMovies(userId)));
 
         if (Config.IncludeSeries)
-            sb.Append(StripHeader(ExportSeries(uid)));
+            sb.Append(StripHeader(ExportSeries(userId)));
 
         if (Config.IncludeLiveTV)
-            sb.Append(StripHeader(ExportLiveTV(uid)));
+            sb.Append(StripHeader(ExportLiveTV(userId)));
 
         if (Config.IncludeCollections)
-            sb.Append(StripHeader(ExportCollections(uid)));
+            sb.Append(StripHeader(ExportCollections(userId)));
 
         return M3UFileResult(sb.ToString());
     }
@@ -168,8 +160,7 @@ public partial class M3UExportController : ControllerBase
 
     private string ExportMovies(Guid? userId)
     {
-        var user = userId.HasValue ? _userManager.GetUserById(userId.Value) : null;
-        var items = _libraryManager.GetItemList(new InternalItemsQuery(user)
+        var items = _libraryManager.GetItemList(new InternalItemsQuery
         {
             IncludeItemTypes = [BaseItemKind.Movie],
             Recursive = true,
@@ -181,11 +172,9 @@ public partial class M3UExportController : ControllerBase
 
     private string ExportSeries(Guid? userId)
     {
-        var user = userId.HasValue ? _userManager.GetUserById(userId.Value) : null;
-
         if (!Config.ExportEpisodesSeparately)
         {
-            var items = _libraryManager.GetItemList(new InternalItemsQuery(user)
+            var items = _libraryManager.GetItemList(new InternalItemsQuery
             {
                 IncludeItemTypes = [BaseItemKind.Series],
                 Recursive = true,
@@ -195,7 +184,7 @@ public partial class M3UExportController : ControllerBase
             return BuildM3U(items, "Series", "series");
         }
 
-        var episodes = _libraryManager.GetItemList(new InternalItemsQuery(user)
+        var episodes = _libraryManager.GetItemList(new InternalItemsQuery
         {
             IncludeItemTypes = [BaseItemKind.Episode],
             Recursive = true,
@@ -248,8 +237,7 @@ public partial class M3UExportController : ControllerBase
 
     private string ExportCollections(Guid? userId)
     {
-        var user = userId.HasValue ? _userManager.GetUserById(userId.Value) : null;
-        var items = _libraryManager.GetItemList(new InternalItemsQuery(user)
+        var items = _libraryManager.GetItemList(new InternalItemsQuery
         {
             IncludeItemTypes = [BaseItemKind.BoxSet],
             Recursive = true,
@@ -370,29 +358,11 @@ public partial class M3UExportController : ControllerBase
         return File(Encoding.UTF8.GetBytes(content), MediaTypeNames.Text.Plain, "playlist.m3u");
     }
 
-    private (IActionResult? Error, Guid? UserId) ResolveUser(Guid? userId, string? token)
+    private bool ValidateToken(string? token)
     {
-        if (!string.IsNullOrEmpty(token))
-        {
-            if (token != Config.ApiKey)
-                return (Unauthorized(new { error = "API Key inválida" }), null);
-
-            if (userId.HasValue)
-            {
-                try { _ = _userManager.GetUserById(userId.Value); return (null, userId); }
-                catch { return (Unauthorized(new { error = "Usuario no encontrado" }), null); }
-            }
-
-            return (null, null);
-        }
-
-        if (userId.HasValue)
-        {
-            try { _ = _userManager.GetUserById(userId.Value); return (null, userId); }
-            catch { return (Unauthorized(new { error = "Usuario no encontrado" }), null); }
-        }
-
-        return (null, null);
+        if (string.IsNullOrEmpty(token))
+            return true;
+        return token == Config.ApiKey;
     }
 
     [GeneratedRegex("[<>\"'&|\\\\/:*?\\x00-\\x1f]")]
