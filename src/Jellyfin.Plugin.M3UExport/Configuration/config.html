@@ -1,126 +1,21 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <title>M3U Export - Configuraci&oacute;n</title>
-  <style>
-    :root { --bg: #1c1c1c; --surface: #2a2a2a; --text: #e0e0e0; --accent: #00a4dc; --border: #444; --danger: #e74c3c; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 24px; }
-    h1 { font-size: 1.6rem; margin-bottom: 24px; color: var(--accent); }
-    h2 { font-size: 1.1rem; margin: 20px 0 12px; color: #ccc; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-    .section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
-    .row { display: flex; align-items: center; gap: 12px; margin: 8px 0; flex-wrap: wrap; }
-    label { min-width: 180px; font-size: 0.9rem; }
-    input[type="text"], input[type="number"] { flex: 1; min-width: 200px; padding: 8px 12px; background: #1c1c1c; border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 0.9rem; }
-    input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
-    select { padding: 8px 12px; background: #1c1c1c; border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 0.9rem; }
-    .btn { padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: opacity .2s; }
-    .btn:hover { opacity: .85; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-    .subtext { font-size: 0.8rem; color: #888; margin-left: 180px; margin-top: 2px; }
-    .status { margin-top: 12px; padding: 10px 16px; border-radius: 6px; display: none; }
-    .status.success { background: #1a3a2a; border: 1px solid #2ecc71; color: #2ecc71; display: block; }
-    .status.error { background: #3a1a1a; border: 1px solid var(--danger); color: var(--danger); display: block; }
-  </style>
+  <title>M3U Export Config</title>
 </head>
-<body>
-  <h1>M3U Export Plugin</h1>
+<body style="background:#1c1c1c;color:#e0e0e0;font-family:sans-serif;padding:24px;">
+  <h1 style="color:#00a4dc;">M3U Export Plugin</h1>
+  <p>Si ves esto, el HTML se sirve correctamente.</p>
 
-  <div class="section">
-    <h2>Servidor</h2>
-    <div class="row">
-      <label for="ServerUrl">URL p&uacute;blica del servidor</label>
-      <input id="ServerUrl" name="ServerUrl" type="text" placeholder="https://jellyfin.midominio.com:8096" />
-    </div>
-    <div class="subtext">Usada para construir las URLs de streaming en el M3U.</div>
-
-    <div class="row">
-      <label for="ApiKey">API Key (Token)</label>
-      <input id="ApiKey" name="ApiKey" type="text" placeholder="Crea una API Key en Dashboard &gt; API Keys" />
-    </div>
-    <div class="subtext">Se incrusta en las URLs del M3U para autenticaci&oacute;n sin login.</div>
+  <div style="background:#2a2a2a;border:1px solid #444;border-radius:8px;padding:16px;margin:16px 0;">
+    <h2 style="color:#ccc;">Configuraci&oacute;n</h2>
+    <div id="config-status">Cargando configuraci&oacute;n...</div>
   </div>
 
-  <div class="section">
-    <h2>Contenido a exportar</h2>
-    <div class="row">
-      <label for="IncludeMovies">Pel&iacute;culas</label>
-      <input id="IncludeMovies" name="IncludeMovies" type="checkbox" />
-    </div>
-    <div class="row">
-      <label for="IncludeSeries">Series / Episodios</label>
-      <input id="IncludeSeries" name="IncludeSeries" type="checkbox" />
-    </div>
-    <div class="row">
-      <label for="IncludeLiveTV">TV en vivo</label>
-      <input id="IncludeLiveTV" name="IncludeLiveTV" type="checkbox" />
-    </div>
-    <div class="row">
-      <label for="IncludeCollections">Colecciones (BoxSets)</label>
-      <input id="IncludeCollections" name="IncludeCollections" type="checkbox" />
-    </div>
-  </div>
+  <button onclick="saveConfig()" style="padding:10px 24px;background:#00a4dc;color:#fff;border:none;border-radius:6px;cursor:pointer;">Guardar</button>
+  <button onclick="triggerExport()" style="padding:10px 24px;background:#e74c3c;color:#fff;border:none;border-radius:6px;cursor:pointer;">Exportar</button>
 
-  <div class="section">
-    <h2>Formato M3U</h2>
-    <div class="row">
-      <label for="StreamType">Tipo de stream</label>
-      <select id="StreamType" name="StreamType">
-        <option value="Direct">Directo (stream original)</option>
-        <option value="Transcoded">Transcodificado (MKV)</option>
-        <option value="FilePath">Ruta local (file://)</option>
-      </select>
-    </div>
-    <div class="row">
-      <label for="GroupByLibrary">Agrupar por biblioteca</label>
-      <input id="GroupByLibrary" name="GroupByLibrary" type="checkbox" />
-    </div>
-    <div class="row">
-      <label for="UseGroupTitle">Usar group-title</label>
-      <input id="UseGroupTitle" name="UseGroupTitle" type="checkbox" />
-    </div>
-    <div class="row">
-      <label for="IncludeMetadata">Incluir metadatos (a&ntilde;o, rating)</label>
-      <input id="IncludeMetadata" name="IncludeMetadata" type="checkbox" />
-    </div>
-    <div class="row">
-      <label for="AppendUserToken">Incrustar API Key en URLs</label>
-      <input id="AppendUserToken" name="AppendUserToken" type="checkbox" />
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>Series</h2>
-    <div class="row">
-      <label for="ExportEpisodesSeparately">Exportar episodios individuales</label>
-      <input id="ExportEpisodesSeparately" name="ExportEpisodesSeparately" type="checkbox" />
-    </div>
-    <div class="row">
-      <label for="MaxEpisodesPerSeries">Max episodios por serie (0 = todos)</label>
-      <input id="MaxEpisodesPerSeries" name="MaxEpisodesPerSeries" type="number" min="0" />
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>Exportaci&oacute;n a archivo</h2>
-    <div class="row">
-      <label for="OutputDirectory">Directorio de salida</label>
-      <input id="OutputDirectory" name="OutputDirectory" type="text" placeholder="/config/plugins/m3uexport/exports" />
-    </div>
-    <div class="row">
-      <label for="FileNamePrefix">Prefijo de archivos</label>
-      <input id="FileNamePrefix" name="FileNamePrefix" type="text" placeholder="jellyfin_export" />
-    </div>
-  </div>
-
-  <div class="actions">
-    <button class="btn btn-primary" onclick="saveConfig()">Guardar configuraci&oacute;n</button>
-    <button class="btn btn-danger" onclick="triggerExport()">Exportar ahora</button>
-  </div>
-
-  <div id="status" class="status"></div>
+  <div id="status" style="margin-top:12px;display:none;"></div>
 
   <script>
     var pluginId = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
@@ -128,77 +23,73 @@
     function showStatus(msg, type) {
       var el = document.getElementById('status');
       el.textContent = msg;
-      el.className = 'status ' + type;
-      setTimeout(function() { el.className = 'status'; }, 6000);
+      el.style.display = 'block';
+      el.style.background = type === 'error' ? '#3a1a1a' : '#1a3a2a';
+      el.style.border = '1px solid ' + (type === 'error' ? '#e74c3c' : '#2ecc71');
+      el.style.color = type === 'error' ? '#e74c3c' : '#2ecc71';
+      el.style.padding = '10px 16px';
+      el.style.borderRadius = '6px';
     }
 
     function apiUrl(path) {
-      var api = window.ApiClient;
-      if (api && api.serverAddress && api.serverAddress()) {
-        return api.serverAddress() + path;
+      if (window.ApiClient && ApiClient.serverAddress && ApiClient.serverAddress()) {
+        return ApiClient.serverAddress() + path;
       }
       var loc = window.location;
-      var port = loc.port ? ':' + loc.port : '';
-      return loc.protocol + '//' + loc.hostname + port + path;
+      return loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') + path;
     }
 
     async function loadConfig() {
+      var statusEl = document.getElementById('config-status');
       try {
         var url = apiUrl('/plugins/' + pluginId + '/Configuration');
         var data;
-        if (window.ApiClient && ApiClient.getJSON) {
-          data = await ApiClient.getJSON(url);
-        } else {
-          var resp = await fetch(url);
-          data = await resp.json();
-        }
-        if (!data) return;
-        for (var key in data) {
-          if (!data.hasOwnProperty(key)) continue;
-          var el = document.querySelector('[name="' + key + '"]');
-          if (!el) continue;
-          if (el.type === 'checkbox') {
-            el.checked = data[key] === true;
+        statusEl.textContent = 'Obteniendo ' + url;
+        
+        if (window.ApiClient) {
+          statusEl.textContent = 'Usando ApiClient...';
+          if (ApiClient.getPluginConfiguration) {
+            data = await ApiClient.getPluginConfiguration(pluginId);
+          } else if (ApiClient.getJSON) {
+            data = await ApiClient.getJSON(url);
           } else {
-            el.value = data[key] != null ? data[key] : '';
+            // Try fetching
+            var r = await fetch(url);
+            data = await r.json();
           }
+        } else {
+          statusEl.textContent = 'ApiClient no disponible, usando fetch...';
+          var r = await fetch(url);
+          data = await r.json();
         }
+        
+        statusEl.textContent = 'Configuraci&oacute;n cargada: ' + JSON.stringify(data).substring(0, 200);
       } catch (e) {
-        showStatus('Error al cargar configuraci&oacute;n: ' + (e.message || e), 'error');
+        statusEl.textContent = 'Error: ' + (e.message || e);
+        showStatus('Error al cargar: ' + (e.message || e), 'error');
       }
     }
 
     async function saveConfig() {
-      var config = {};
-      document.querySelectorAll('[name]').forEach(function(el) {
-        if (el.type === 'checkbox') {
-          config[el.name] = el.checked;
-        } else if (el.type === 'number') {
-          config[el.name] = parseInt(el.value, 10) || 0;
-        } else {
-          config[el.name] = el.value;
-        }
-      });
-
       try {
         var url = apiUrl('/plugins/' + pluginId + '/Configuration');
         if (window.ApiClient && ApiClient.ajax) {
           await ApiClient.ajax({
             type: 'POST',
             url: url,
-            data: JSON.stringify(config),
+            data: '{}',
             contentType: 'application/json'
           });
         } else {
           await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(config)
+            body: '{}'
           });
         }
-        showStatus('Configuraci&oacute;n guardada correctamente.', 'success');
+        showStatus('Guardado (config vac&iacute;a)', 'success');
       } catch (e) {
-        showStatus('Error al guardar: ' + (e.message || e), 'error');
+        showStatus('Error: ' + (e.message || e), 'error');
       }
     }
 
@@ -207,18 +98,15 @@
         var url = apiUrl('/M3UExport/export');
         var resp;
         if (window.ApiClient && ApiClient.ajax) {
-          resp = await ApiClient.ajax({
-            type: 'GET',
-            url: url
-          });
+          resp = await ApiClient.ajax({ type: 'GET', url: url });
         } else {
           var r = await fetch(url);
           resp = await r.text();
         }
         var data = typeof resp === 'string' ? JSON.parse(resp) : resp;
-        showStatus('Exportaci&oacute;n completada en: ' + (data.outputDir || 'directorio configurado'), 'success');
+        showStatus('Exportaci&oacute;n: ' + (data.message || 'OK'), 'success');
       } catch (e) {
-        showStatus('Error en exportaci&oacute;n: ' + (e.message || e), 'error');
+        showStatus('Error export: ' + (e.message || e), 'error');
       }
     }
 

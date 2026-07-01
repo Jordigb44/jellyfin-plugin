@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.0.0.1</Version>
+    <Version>1.0.0.2</Version>
     <NoWarn>$(NoWarn);CS1591;SA1633;SA1600</NoWarn>
   </PropertyGroup>
 
