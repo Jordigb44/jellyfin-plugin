@@ -219,6 +219,12 @@ public partial class M3UExportController : ControllerBase
             sb.Append(" tvg-type=\"live\"");
             if (Config.UseGroupTitle)
                 sb.Append(" group-title=\"Live TV\"");
+            if (Config.IncludeMetadata)
+            {
+                var serverUrl = Config.ServerUrl?.TrimEnd('/');
+                if (!string.IsNullOrEmpty(serverUrl))
+                    sb.Append(CultureInfo.InvariantCulture, $" tvg-logo=\"{serverUrl}/LiveTv/Channel/{channel.Id}/Images/Primary\"");
+            }
             sb.Append(CultureInfo.InvariantCulture, $",{Sanitize(name)}");
             sb.AppendLine();
 
@@ -282,10 +288,16 @@ public partial class M3UExportController : ControllerBase
                 sb.Append(CultureInfo.InvariantCulture, $" tvg-year=\"{item.ProductionYear.Value}\"");
             if (!string.IsNullOrEmpty(item.OfficialRating))
                 sb.Append(CultureInfo.InvariantCulture, $" tvg-rating=\"{Sanitize(item.OfficialRating)}\"");
+            var serverUrl = Config.ServerUrl?.TrimEnd('/');
+            if (!string.IsNullOrEmpty(serverUrl))
+                sb.Append(CultureInfo.InvariantCulture, $" tvg-logo=\"{serverUrl}/Items/{item.Id}/Images/Primary\"");
         }
 
         sb.Append(CultureInfo.InvariantCulture, $",{Sanitize(name)}");
         sb.AppendLine();
+
+        if (Config.IncludeMetadata && !string.IsNullOrEmpty(item.Overview))
+            sb.AppendLine(CultureInfo.InvariantCulture, $"#EXTDESC:{Sanitize(item.Overview)}");
 
         var url = Config.StreamType switch
         {

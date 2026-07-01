@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "1.0.0.10",
+        "changelog": "Add tvg-logo (poster artwork) and #EXTDESC (overview description) to M3U entries when IncludeMetadata is enabled.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.10.zip",
+        "checksum": "97b01697c748d4f695d348c784a087a9",
+        "timestamp": "2026-07-01T13:00:00Z"
+      },
+      {
         "version": "1.0.0.9",
         "changelog": "Compilacion automatica desde CI.",
         "targetAbi": "10.10.0.0",
