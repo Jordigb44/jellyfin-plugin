@@ -1,6 +1,6 @@
 name: "M3U Export"
 guid: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-version: "1.0.0.10"
+version: "1.0.0.11"
 targetAbi: "10.10.0.0"
 framework: "net8.0"
 overview: "Exporta tu biblioteca Jellyfin a listas M3U"
@@ -13,4 +13,4 @@ owner: "homelab"
 artifacts:
   - "Jellyfin.Plugin.M3UExport.dll"
 changelog: |-
-  v1.0.0.10: Add tvg-logo (poster) and #EXTDESC (overview) to M3U entries
+  v1.0.0.11: Fix IPTV player categorization as live TV — use EXTINF:0 and inline description

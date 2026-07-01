@@ -264,7 +264,7 @@ public partial class M3UExportController : ControllerBase
         foreach (var group in items.GroupBy(GetLibraryName))
         {
             if (Config.UseGroupTitle)
-                sb.AppendLine(CultureInfo.InvariantCulture, $"#EXTINF:-1 group-title=\"{Sanitize(group.Key)}\",--- {Sanitize(group.Key)} ---");
+                sb.AppendLine(CultureInfo.InvariantCulture, $"#EXTINF:0 group-title=\"{Sanitize(group.Key)}\",--- {Sanitize(group.Key)} ---");
 
             foreach (var item in group)
                 AppendEntry(sb, item, group.Key, type);
@@ -276,7 +276,7 @@ public partial class M3UExportController : ControllerBase
     private void AppendEntry(StringBuilder sb, BaseItem item, string group, string type)
     {
         var name = BuildDisplayName(item);
-        sb.Append("#EXTINF:-1");
+        sb.Append("#EXTINF:0");
         sb.Append(CultureInfo.InvariantCulture, $" tvg-id=\"{Sanitize(type)}-{item.Id}\"");
         sb.Append(CultureInfo.InvariantCulture, $" tvg-name=\"{Sanitize(name)}\"");
         sb.Append(CultureInfo.InvariantCulture, $" tvg-type=\"{Sanitize(type)}\"");
@@ -291,13 +291,12 @@ public partial class M3UExportController : ControllerBase
             var serverUrl = Config.ServerUrl?.TrimEnd('/');
             if (!string.IsNullOrEmpty(serverUrl))
                 sb.Append(CultureInfo.InvariantCulture, $" tvg-logo=\"{serverUrl}/Items/{item.Id}/Images/Primary\"");
+            if (!string.IsNullOrEmpty(item.Overview))
+                sb.Append(CultureInfo.InvariantCulture, $" description=\"{Sanitize(item.Overview)}\"");
         }
 
         sb.Append(CultureInfo.InvariantCulture, $",{Sanitize(name)}");
         sb.AppendLine();
-
-        if (Config.IncludeMetadata && !string.IsNullOrEmpty(item.Overview))
-            sb.AppendLine(CultureInfo.InvariantCulture, $"#EXTDESC:{Sanitize(item.Overview)}");
 
         var url = Config.StreamType switch
         {
