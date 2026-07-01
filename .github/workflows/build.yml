@@ -42,7 +42,7 @@ jobs:
       - name: Update manifest
         run: |
           VER=${{ steps.version.outputs.version }}
-          CHKSUM=$(sha256sum repo/Jellyfin.Plugin.M3UExport_${VER}.zip | cut -d' ' -f1)
+          CHKSUM=$(md5sum repo/Jellyfin.Plugin.M3UExport_${VER}.zip | cut -d' ' -f1)
           TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
           cat > repo/manifest.json << EOF
