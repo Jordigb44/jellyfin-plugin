@@ -9,11 +9,11 @@
     "versions": [
       {
         "version": "1.0.0.6",
-        "changelog": "Fix TypeLoadException SortOrder (compatibilidad con Jellyfin 10.11).",
+        "changelog": "Compilacion automatica desde CI.",
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.6.zip",
-        "checksum": "0b190d0bf4527040ff81fbf81bc0e985a20cfe3fd6ca7ad00df76c9ccffe3e84",
-        "timestamp": "2026-07-01T11:10:00Z"
+        "checksum": "3ea23ef5541e0145f4da850299110550",
+        "timestamp": "2026-07-01T11:30:27Z"
       },
       {
         "version": "1.0.0.5",
