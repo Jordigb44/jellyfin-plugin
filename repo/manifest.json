@@ -9,11 +9,11 @@
     "versions": [
       {
         "version": "1.0.0.9",
-        "changelog": "Fix corrupted ZIP in v1.0.0.8 that caused 'End of Central Directory record could not be found' on install.",
+        "changelog": "Compilacion automatica desde CI.",
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.9.zip",
-        "checksum": "a3ca9c1d474069e893a35c657f1951fd",
-        "timestamp": "2026-07-01T12:30:00Z"
+        "checksum": "2e9b78a4d61b814c270ec162e6b14688",
+        "timestamp": "2026-07-01T12:00:00Z"
       },
       {
         "version": "1.0.0.8",
