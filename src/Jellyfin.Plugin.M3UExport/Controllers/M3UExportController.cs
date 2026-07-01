@@ -160,12 +160,12 @@ public partial class M3UExportController : ControllerBase
 
     private string ExportMovies(Guid? userId)
     {
-        var items = _libraryManager.GetItemList(new InternalItemsQuery
+        var items = _libraryManager.GetItemsResult(new InternalItemsQuery
         {
             IncludeItemTypes = [BaseItemKind.Movie],
             Recursive = true,
             IsVirtualItem = false,
-        });
+        }).Items;
         return BuildM3U(items, "Movies", "movie");
     }
 
@@ -173,21 +173,21 @@ public partial class M3UExportController : ControllerBase
     {
         if (!Config.ExportEpisodesSeparately)
         {
-            var items = _libraryManager.GetItemList(new InternalItemsQuery
+            var items = _libraryManager.GetItemsResult(new InternalItemsQuery
             {
                 IncludeItemTypes = [BaseItemKind.Series],
                 Recursive = true,
                 IsVirtualItem = false,
-            });
+            }).Items;
             return BuildM3U(items, "Series", "series");
         }
 
-        var episodes = _libraryManager.GetItemList(new InternalItemsQuery
+        var episodes = _libraryManager.GetItemsResult(new InternalItemsQuery
         {
             IncludeItemTypes = [BaseItemKind.Episode],
             Recursive = true,
             IsVirtualItem = false,
-        });
+        }).Items;
 
         if (Config.MaxEpisodesPerSeries > 0)
         {
@@ -234,11 +234,11 @@ public partial class M3UExportController : ControllerBase
 
     private string ExportCollections(Guid? userId)
     {
-        var items = _libraryManager.GetItemList(new InternalItemsQuery
+        var items = _libraryManager.GetItemsResult(new InternalItemsQuery
         {
             IncludeItemTypes = [BaseItemKind.BoxSet],
             Recursive = true,
-        });
+        }).Items;
         return BuildM3U(items, "Collections", "collection");
     }
 
