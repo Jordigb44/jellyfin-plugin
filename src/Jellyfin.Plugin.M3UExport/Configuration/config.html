@@ -1,15 +1,197 @@
-<div data-role="page" class="page type-interior">
+<div id="m3uExportConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-select,emby-checkbox,emby-button">
   <div data-role="content">
     <div class="content-primary">
-      <div style="padding:24px;max-width:800px;">
-        <h1 style="color:#00a4dc;margin-bottom:16px;">M3U Export Plugin</h1>
-        <p style="margin-bottom:24px;color:#aaa;">Plugin config page loaded successfully.</p>
-
-        <div style="background:#2a2a2a;border:1px solid #444;border-radius:8px;padding:16px;margin:16px 0;">
-          <h2 style="color:#ccc;margin:0 0 12px 0;">Status</h2>
-          <div id="config-status" style="color:#e0e0e0;">Page loaded.</div>
+      <form id="m3uExportConfigForm">
+        <div class="verticalSection">
+          <h2>Connection</h2>
+          <div class="inputContainer">
+            <input id="ServerUrl" type="text" is="emby-input" label="Server URL" />
+            <div class="fieldDescription">Jellyfin server base URL (e.g. https://jellyfin.example.com). Used to build stream URLs.</div>
+          </div>
+          <div class="inputContainer">
+            <input id="ApiKey" type="text" is="emby-input" label="API Key" />
+            <div class="fieldDescription">API key for authenticated access to streams. Required when using token-based auth.</div>
+          </div>
+          <div class="checkboxContainer">
+            <label>
+              <input id="AppendUserToken" type="checkbox" is="emby-checkbox" />
+              <span>Append API key to stream URLs</span>
+            </label>
+            <div class="fieldDescription">Automatically append api_key parameter to generated M3U stream URLs.</div>
+          </div>
         </div>
-      </div>
+
+        <div class="verticalSection">
+          <h2>Content Types</h2>
+          <div class="checkboxContainer">
+            <label>
+              <input id="IncludeMovies" type="checkbox" is="emby-checkbox" />
+              <span>Include Movies</span>
+            </label>
+          </div>
+          <div class="checkboxContainer">
+            <label>
+              <input id="IncludeSeries" type="checkbox" is="emby-checkbox" />
+              <span>Include Series</span>
+            </label>
+          </div>
+          <div class="checkboxContainer">
+            <label>
+              <input id="IncludeLiveTV" type="checkbox" is="emby-checkbox" />
+              <span>Include Live TV</span>
+            </label>
+          </div>
+          <div class="checkboxContainer">
+            <label>
+              <input id="IncludeCollections" type="checkbox" is="emby-checkbox" />
+              <span>Include Collections</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="verticalSection">
+          <h2>Export Settings</h2>
+          <div class="inputContainer">
+            <input id="OutputDirectory" type="text" is="emby-input" label="Output Directory" />
+            <div class="fieldDescription">Server-side directory where exported M3U files will be written.</div>
+          </div>
+          <div class="inputContainer">
+            <input id="FileNamePrefix" type="text" is="emby-input" label="File Name Prefix" />
+            <div class="fieldDescription">Prefix for exported file names (e.g. "jellyfin_export").</div>
+          </div>
+          <div class="selectContainer">
+            <select id="StreamType" is="emby-select" label="Stream Type">
+              <option value="0">Direct</option>
+              <option value="1">Transcoded</option>
+              <option value="2">File Path</option>
+            </select>
+            <div class="fieldDescription">How to reference media in the M3U: Direct URL, transcoded stream, or local file path.</div>
+          </div>
+          <div class="checkboxContainer">
+            <label>
+              <input id="GroupByLibrary" type="checkbox" is="emby-checkbox" />
+              <span>Group by Library</span>
+            </label>
+            <div class="fieldDescription">Group entries by their library/folder in the M3U output.</div>
+          </div>
+          <div class="checkboxContainer">
+            <label>
+              <input id="UseGroupTitle" type="checkbox" is="emby-checkbox" />
+              <span>Use Group Title</span>
+            </label>
+            <div class="fieldDescription">Include group-title tags in EXTINF entries.</div>
+          </div>
+        </div>
+
+        <div class="verticalSection">
+          <h2>Series Options</h2>
+          <div class="checkboxContainer">
+            <label>
+              <input id="ExportEpisodesSeparately" type="checkbox" is="emby-checkbox" />
+              <span>Export Episodes Separately</span>
+            </label>
+            <div class="fieldDescription">Export individual episodes instead of whole series entries.</div>
+          </div>
+          <div class="inputContainer">
+            <input id="MaxEpisodesPerSeries" type="number" is="emby-input" label="Max Episodes per Series" />
+            <div class="fieldDescription">Maximum episodes per series when exporting separately (0 = unlimited).</div>
+          </div>
+        </div>
+
+        <div class="verticalSection">
+          <h2>Advanced</h2>
+          <div class="checkboxContainer">
+            <label>
+              <input id="IncludeMetadata" type="checkbox" is="emby-checkbox" />
+              <span>Include Metadata</span>
+            </label>
+            <div class="fieldDescription">Include tvg-year and tvg-rating in EXTINF entries.</div>
+          </div>
+          <div class="checkboxContainer">
+            <label>
+              <input id="EnableScheduledExport" type="checkbox" is="emby-checkbox" />
+              <span>Enable Scheduled Export</span>
+            </label>
+            <div class="fieldDescription">Automatically export M3U files on a schedule.</div>
+          </div>
+          <div class="inputContainer">
+            <input id="ScheduledExportIntervalHours" type="number" is="emby-input" label="Export Interval (hours)" />
+            <div class="fieldDescription">Hours between scheduled exports (only applies if scheduled export is enabled).</div>
+          </div>
+        </div>
+
+        <div>
+          <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+            <span>Save</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
+
+  <script type="text/javascript">
+    var M3UExportConfig = {
+      pluginUniqueId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    };
+
+    document.querySelector('#m3uExportConfigPage')
+      .addEventListener('pageshow', function () {
+        Dashboard.showLoadingMsg();
+
+        ApiClient.getPluginConfiguration(M3UExportConfig.pluginUniqueId)
+          .then(function (config) {
+            document.querySelector('#ServerUrl').value = config.ServerUrl || '';
+            document.querySelector('#ApiKey').value = config.ApiKey || '';
+            document.querySelector('#AppendUserToken').checked = config.AppendUserToken !== false;
+            document.querySelector('#IncludeMovies').checked = config.IncludeMovies !== false;
+            document.querySelector('#IncludeSeries').checked = config.IncludeSeries !== false;
+            document.querySelector('#IncludeLiveTV').checked = config.IncludeLiveTV !== false;
+            document.querySelector('#IncludeCollections').checked = config.IncludeCollections !== false;
+            document.querySelector('#OutputDirectory').value = config.OutputDirectory || '';
+            document.querySelector('#FileNamePrefix').value = config.FileNamePrefix || 'jellyfin_export';
+            document.querySelector('#StreamType').value = String(config.StreamType || 0);
+            document.querySelector('#GroupByLibrary').checked = config.GroupByLibrary !== false;
+            document.querySelector('#UseGroupTitle').checked = config.UseGroupTitle !== false;
+            document.querySelector('#ExportEpisodesSeparately').checked = config.ExportEpisodesSeparately !== false;
+            document.querySelector('#MaxEpisodesPerSeries').value = config.MaxEpisodesPerSeries || 0;
+            document.querySelector('#IncludeMetadata').checked = config.IncludeMetadata !== false;
+            document.querySelector('#EnableScheduledExport').checked = config.EnableScheduledExport || false;
+            document.querySelector('#ScheduledExportIntervalHours').value = config.ScheduledExportIntervalHours || 24;
+
+            Dashboard.hideLoadingMsg();
+          });
+      });
+
+    document.querySelector('#m3uExportConfigForm')
+      .addEventListener('submit', function (e) {
+        Dashboard.showLoadingMsg();
+
+        ApiClient.getPluginConfiguration(M3UExportConfig.pluginUniqueId)
+          .then(function (config) {
+            config.ServerUrl = document.querySelector('#ServerUrl').value;
+            config.ApiKey = document.querySelector('#ApiKey').value;
+            config.AppendUserToken = document.querySelector('#AppendUserToken').checked;
+            config.IncludeMovies = document.querySelector('#IncludeMovies').checked;
+            config.IncludeSeries = document.querySelector('#IncludeSeries').checked;
+            config.IncludeLiveTV = document.querySelector('#IncludeLiveTV').checked;
+            config.IncludeCollections = document.querySelector('#IncludeCollections').checked;
+            config.OutputDirectory = document.querySelector('#OutputDirectory').value;
+            config.FileNamePrefix = document.querySelector('#FileNamePrefix').value;
+            config.StreamType = parseInt(document.querySelector('#StreamType').value, 10) || 0;
+            config.GroupByLibrary = document.querySelector('#GroupByLibrary').checked;
+            config.UseGroupTitle = document.querySelector('#UseGroupTitle').checked;
+            config.ExportEpisodesSeparately = document.querySelector('#ExportEpisodesSeparately').checked;
+            config.MaxEpisodesPerSeries = parseInt(document.querySelector('#MaxEpisodesPerSeries').value, 10) || 0;
+            config.IncludeMetadata = document.querySelector('#IncludeMetadata').checked;
+            config.EnableScheduledExport = document.querySelector('#EnableScheduledExport').checked;
+            config.ScheduledExportIntervalHours = parseInt(document.querySelector('#ScheduledExportIntervalHours').value, 10) || 24;
+
+            ApiClient.updatePluginConfiguration(M3UExportConfig.pluginUniqueId, config)
+              .then(Dashboard.processPluginConfigurationUpdateResult);
+          });
+
+        e.preventDefault();
+        return false;
+      });
+  </script>
 </div>
