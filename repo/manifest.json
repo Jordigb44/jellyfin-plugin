@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "1.0.0.3",
+        "changelog": "Fix: config page wrapped in data-role=\"page\" for proper Dashboard loading.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.3.zip",
+        "checksum": "27119e58f6dda55280ba35f12bd323b1",
+        "timestamp": "2026-07-01T18:00:00Z"
+      },
+      {
         "version": "1.0.0.2",
         "changelog": "Compilación automática desde CI.",
         "targetAbi": "10.10.0.0",
