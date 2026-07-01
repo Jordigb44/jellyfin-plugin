@@ -8,10 +8,10 @@
     "category": "General",
     "versions": [
       {
-        "version": "1.0.0.0",
+        "version": "1.0.0.2",
         "changelog": "Compilación automática desde CI.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.0.zip",
+        "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.2.zip",
         "checksum": "b3d5cfe7e1396e6ad2469f40a600c08e",
         "timestamp": "2026-07-01T10:04:02Z"
       }
