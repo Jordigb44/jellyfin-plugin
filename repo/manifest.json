@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "1.0.0.8",
+        "changelog": "Add tvg-type attribute to M3U entries for IPTV player categorization (movie/series/episode/collection/live).",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://raw.githubusercontent.com/Jordigb44/jellyfin-plugin/main/repo/Jellyfin.Plugin.M3UExport_1.0.0.8.zip",
+        "checksum": "f3653de4c07ac768e8ca8d4bf6c69f50ff51919cdace1b8706e7544363dbfe53",
+        "timestamp": "2026-07-01T12:00:00Z"
+      },
+      {
         "version": "1.0.0.7",
         "changelog": "Compilacion automatica desde CI.",
         "targetAbi": "10.10.0.0",

@@ -216,6 +216,7 @@ public partial class M3UExportController : ControllerBase
             sb.Append("#EXTINF:-1");
             sb.Append(CultureInfo.InvariantCulture, $" tvg-id=\"live-{channel.Id}\"");
             sb.Append(CultureInfo.InvariantCulture, $" tvg-name=\"{Sanitize(name)}\"");
+            sb.Append(" tvg-type=\"live\"");
             if (Config.UseGroupTitle)
                 sb.Append(" group-title=\"Live TV\"");
             sb.Append(CultureInfo.InvariantCulture, $",{Sanitize(name)}");
@@ -272,6 +273,7 @@ public partial class M3UExportController : ControllerBase
         sb.Append("#EXTINF:-1");
         sb.Append(CultureInfo.InvariantCulture, $" tvg-id=\"{Sanitize(type)}-{item.Id}\"");
         sb.Append(CultureInfo.InvariantCulture, $" tvg-name=\"{Sanitize(name)}\"");
+        sb.Append(CultureInfo.InvariantCulture, $" tvg-type=\"{Sanitize(type)}\"");
         if (Config.UseGroupTitle && !string.IsNullOrEmpty(group))
             sb.Append(CultureInfo.InvariantCulture, $" group-title=\"{Sanitize(group)}\"");
         if (Config.IncludeMetadata)
